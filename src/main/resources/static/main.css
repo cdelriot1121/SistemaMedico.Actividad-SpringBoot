@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+
+* {
+    font-family: 'Ubuntu', sans-serif;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background: url(https://www.simbiotia.com/wp-content/uploads/diseno-de-salas-de-espera.jpg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    width: 90%;
+    margin: auto;
+    overflow: hidden;
+}
+
+nav {
+    background: #3498db;
+    color: white;
+    padding: 1rem 0;
+}
+
+nav .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+nav ul li {
+    padding: 0 1rem;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+}
+
+footer {
+    background: #34495e;
+    color: white;
+    text-align: center;
+    padding: 1rem 0;
+    margin-top: auto;
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    nav .container {
+        flex-direction: column;
+    }
+    nav ul {
+        margin-top: 1rem;
+    }
+    .buttons {
+        flex-direction: column;
+    }
+}
