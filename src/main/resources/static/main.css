@@ -16,11 +16,13 @@ body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
     color: #333;
-    background: url(https://www.simbiotia.com/wp-content/uploads/diseno-de-salas-de-espera.jpg);
+    background: url(https://www.simbiotia.com/wp-content/uploads/diseno-de-salas-de-espera.jpg) no-repeat center center fixed;
+    background-size: cover; /* Ajusta el tamaño de la imagen para que cubra toda la pantalla */
     min-height: 100vh;
     display: flex;
     flex-direction: column;
 }
+
 
 .container {
     width: 90%;
