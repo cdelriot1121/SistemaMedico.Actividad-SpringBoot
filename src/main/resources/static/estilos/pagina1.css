@@ -17,6 +17,7 @@ form {
     background: #f4f4f4;
     padding: 2rem;
     border-radius: 5px;
+    margin: 3px;
 }
 .form-group {
     margin-bottom: 1rem;
@@ -36,6 +37,7 @@ textarea {
     resize: none;
     height: 100px;
 }
+
 .btn {
     display: inline-block;
     background: #3498db;

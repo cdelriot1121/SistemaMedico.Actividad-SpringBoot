@@ -1,7 +1,7 @@
 package com.SistemaMedico.model;
 
 public class CitaModel {
-
+    private int no_id;
     private String nombre_paciente;
     private int edad_paciente;
     private String tipo_cita;
@@ -12,8 +12,10 @@ public class CitaModel {
     
     public CitaModel() {
     }
-    public CitaModel(String nombre_paciente, int edad_paciente, String tipo_cita, String genero_pac, String fecha_cita,
+    
+    public CitaModel(int no_id, String nombre_paciente, int edad_paciente, String tipo_cita, String genero_pac, String fecha_cita,
             String motivo_cita) {
+        this.no_id = no_id;
         this.nombre_paciente = nombre_paciente;
         this.edad_paciente = edad_paciente;
         this.tipo_cita = tipo_cita;
@@ -21,6 +23,15 @@ public class CitaModel {
         this.fecha_cita = fecha_cita;
         this.motivo_cita = motivo_cita;
     }
+
+    public int getNo_id() {
+        return no_id;
+    }
+
+    public void setNo_id(int no_id) {
+        this.no_id = no_id;
+    }
+    
     public String getNombre_paciente() {
         return nombre_paciente;
     }
@@ -57,8 +68,6 @@ public class CitaModel {
     public void setMotivo_cita(String motivo_cita) {
         this.motivo_cita = motivo_cita;
     }
-    
-    
-
+        
     
 }

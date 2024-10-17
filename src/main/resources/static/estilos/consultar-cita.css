@@ -1,0 +1,64 @@
+/* consultar-cita.css */
+section {
+    background: white;
+    flex-grow: 1;
+    flex-direction: column;
+    width: 60%;
+    margin: auto;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    border-radius: 20px;
+    padding: 20px;
+}
+
+h2{
+    font-size: 26px;
+}
+
+input{
+    font-family: 'Ubuntu',sans-serif;
+    width: 30%;
+    padding: 0.6rem;
+    border: 1px solid #adadad;
+    border-radius: 3px;
+    margin-bottom: 2px;
+}
+
+.btn{
+    background: #3498db;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+    border: none;
+    cursor: pointer;
+    margin-top: 5px;
+    width: 20%;
+}
+
+.citas-agendadas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.cita-card {
+    border: 1px solid #bbbbbb;
+    border-radius: 10px;
+    padding: 15px;
+    background-color: #ffffff;
+    width: 300px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.355);
+}
+
+.cita-card h3 {
+    margin-top: 0;
+    font-size: 22px;
+}
+
+.cita-card p {
+    margin: 5px 0;
+    font-size: 14px;
+}

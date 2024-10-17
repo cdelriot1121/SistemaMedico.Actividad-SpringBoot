@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Citas Medicas | Consultar tus citas</title>
+
+    <!--LINKS CSS-->
+    <link rel="stylesheet" href="/estilos/consultar-cita.css">
+    <link rel="stylesheet" href="/main.css"> 
+
+    <!--LINKS CODE EXTERNOS-->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h1>HOSPITAL ROLEM</h1>
+            <ul>
+                <li><a href="/"><i class='bx bx-home-alt'></i> Inicio</a></li>
+                <li><a href="#"><i class='bx bx-bar-chart-square'></i> Servicios</a></li>
+                <li><a href="#"><i class='bx bx-book-content'></i> Contacto</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="contenedor-consultar">
+        <h2>Consultar tus citas</h2>
+        <p>Para consultar las citas que tienes agendadas en el sistema, por favor recuerda tu número de identificación</p>
+        
+        
+        <div class="cont-datos">
+            <form id="consulta-citas-form">
+                <label for="num-identificacion">Número de identificación: </label>
+                <input type="number" id="num-identificacion" name="num-identificacion" class="input-nu-id" required><br>
+                <button type="submit" class="btn">Consultar Citas</button>
+            </form>
+        </div>
+
+        <div class="citas-agendadas" id="citas-agendadas">
+
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Hospital ROLEM Todos los derechos reservados.</p>
+            <a href="">Términos</a>
+            <a href="">Privacidad</a>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('consulta-citas-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const numIdentificacion = document.getElementById('num-identificacion').value;
+
+            fetch(`/api/Consultar-Citas?nu-identificacion=${numIdentificacion}`)
+                .then(response => response.json())
+                .then(data => {
+                    const citasContainer = document.getElementById('citas-agendadas');
+                    citasContainer.innerHTML = ''; 
+
+                    if (data.length === 0) {
+                        citasContainer.innerHTML = '<p><b>No se encontraron citas para el número de identificación ingresado.</b></p>';
+                    } else {
+                        data.forEach(cita => {
+                            const citaCard = `
+                                <div class="cita-card">
+                                    <h3>Cita para ${cita.nombre_paciente}</h3>
+                                    <p><strong>Genero del Paciente:</strong> ${cita.genero_pac}</p>
+                                    <p><strong>Fecha:</strong> ${cita.fecha_cita}</p>
+                                    <p><strong>Tipo de Cita:</strong> ${cita.tipo_cita}</p>
+                                    <p><strong>Motivo:</strong> ${cita.motivo_cita}</p>
+                                </div>
+                            `;
+                            citasContainer.innerHTML += citaCard;
+                        });
+                    }
+                });
+        });
+    </script>
+</body>
+</html>

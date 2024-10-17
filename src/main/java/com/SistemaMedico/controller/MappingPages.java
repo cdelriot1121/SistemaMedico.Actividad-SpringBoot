@@ -21,5 +21,10 @@ public class MappingPages {
     public String Aviso(){
         return "Aviso";
     }
+
+    @GetMapping("/Consultar-Citas")
+    public String ConsultarCitas(){
+        return "Consultar-cita";
+    }
     
 }

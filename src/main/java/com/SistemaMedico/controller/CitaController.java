@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class CitaController {
 
-    // Simulación de una lista para almacenar citas
     private List<CitaModel> citas = new ArrayList<>();
 
     @RequestMapping("/Agendar-Cita")
@@ -25,6 +25,7 @@ public class CitaController {
 
     @PostMapping("/procesarCita")
     public String procesarCita(
+            @RequestParam("nu-identificacion") int nu_id,
             @RequestParam("nombre") String nombre,
             @RequestParam("edad") int edad,
             @RequestParam("tipo-cita") String tipoCita,
@@ -33,24 +34,30 @@ public class CitaController {
             @RequestParam("motivo") String motivo,
             Model model) {
 
-        // Crear una nueva instancia de CitaModel
-        CitaModel cita = new CitaModel(nombre, edad, tipoCita, generoPac, fechaCita, motivo);
+        
+        CitaModel cita = new CitaModel(nu_id, nombre, edad, tipoCita, generoPac, fechaCita, motivo);
 
-        // Añadir la cita a la lista simulada
+        
         citas.add(cita);
 
-        // Añadir la cita al modelo para mostrarla en la vista de confirmación
         model.addAttribute("cita", cita);
 
-        // Redirigir a una página de confirmación o éxito
-        return "Aviso"; // Asegúrate de tener una plantilla Aviso.html
+        return "redirect:/Aviso";
     }
 
-    // Nuevo mapeo para consultar citas en formato JSON
-    @GetMapping("/ConsultarCitas")
+    @GetMapping("/Consultar")
     @ResponseBody
     public List<CitaModel> consultarCitas() {
-        // Retornar todas las citas en formato JSON
         return citas;
     }
+
+    @GetMapping("/api/Consultar-Citas")
+    @ResponseBody
+    public List<CitaModel> consultarCitas(@RequestParam("nu-identificacion") int nuId) {
+        return citas.stream()
+                .filter(cita -> cita.getNo_id() == nuId) 
+                .collect(Collectors.toList());
+    }
+
+
 }
