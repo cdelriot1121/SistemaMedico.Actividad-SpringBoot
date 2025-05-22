@@ -1,5 +1,9 @@
 package com.SistemaMedico.model;
 
+
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection = "citas")
 public class CitaModel {
     private int no_id;
     private String nombre_paciente;
