@@ -23,6 +23,9 @@
                 <li><a href="/"><i class='bx bx-home-alt'></i> Inicio</a></li>
                 <li><a href="#"><i class='bx bx-bar-chart-square'></i> Servicios</a></li>
                 <li><a href="#"><i class='bx bx-book-content'></i> Contacto</a></li>
+                <li th:if="${session.usuarioId == null}"><a href="/login"><i class='bx bx-log-in'></i> Iniciar Sesión</a></li>
+                <li th:if="${session.usuarioId == null}"><a href="/register"><i class='bx bx-user-plus'></i> Registrarse</a></li>
+                <li th:if="${session.usuarioId != null}"><a href="/logout"><i class='bx bx-log-out'></i> Cerrar Sesión</a></li>
             </ul>
         </div>
     </nav>
@@ -31,6 +34,7 @@
         <section class="welcome">
             <div class="container-inicio">
                 <h2>Bienvenido a nuestro Sistema de Citas Médicas</h2>
+                <p th:if="${session.nombre != null}">Hola <span th:text="${session.nombre}">Usuario</span>, gracias por usar nuestro sistema de citas médicas.</p>
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in dui mauris. Vivamus hendrerit arcu sed erat molestie vehicula. Sed auctor neque eu tellus rhoncus ut eleifend nibh porttitor. Ut in nulla enim. Phasellus molestie magna non est bibendum non venenatis nisl tempor.</p>
                 <div class="buttons">
                     <a href="/AgendarCita" class="btn">Agendar Cita</a>

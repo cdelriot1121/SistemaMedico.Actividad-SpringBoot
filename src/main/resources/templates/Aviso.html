@@ -27,6 +27,9 @@
                 <li><a href="/"><i class='bx bx-home-alt'></i> Inicio</a></li>
                 <li><a href="#"><i class='bx bx-bar-chart-square'></i> Servicios</a></li>
                 <li><a href="#"><i class='bx bx-book-content'></i> Contacto</a></li>
+                <li th:if="${session.usuarioId == null}"><a href="/login"><i class='bx bx-log-in'></i> Iniciar Sesión</a></li>
+                <li th:if="${session.usuarioId == null}"><a href="/register"><i class='bx bx-user-plus'></i> Registrarse</a></li>
+                <li th:if="${session.usuarioId != null}"><a href="/logout"><i class='bx bx-log-out'></i> Cerrar Sesión</a></li>
             </ul>
         </div>
     </nav>

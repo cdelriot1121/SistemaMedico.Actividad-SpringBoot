@@ -1,6 +1,9 @@
 package com.SistemaMedico.controller;
 
 import com.SistemaMedico.model.CitaModel;
+import com.SistemaMedico.services.CitaService;
+import com.SistemaMedico.services.UsuarioService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,17 +12,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class CitaController {
 
-    private List<CitaModel> citas = new ArrayList<>();
+    @Autowired
+    private CitaService citaService;
+    
+    @Autowired
+    private UsuarioService usuarioService;
 
     @RequestMapping("/Agendar-Cita")
-    public String mostrarAgendarCita() {
+    public String mostrarAgendarCita(HttpSession session, Model model) {
+        // Verificar si el usuario está autenticado
+        if (session.getAttribute("usuarioId") == null) {
+            return "redirect:/login?redirect=AgendarCita";
+        }
+        
+        Integer identificacion = (Integer) session.getAttribute("identificacion");
+        if (identificacion != null) {
+            model.addAttribute("identificacion", identificacion);
+        }
+        
         return "Agendar-Cita";
     }
 
@@ -32,32 +48,25 @@ public class CitaController {
             @RequestParam("genero-doctor") String generoPac,
             @RequestParam("fecha-cita") String fechaCita,
             @RequestParam("motivo") String motivo,
+            HttpSession session,
             Model model) {
 
+        // Verificar si el usuario está autenticado
+        if (session.getAttribute("usuarioId") == null) {
+            return "redirect:/login";
+        }
         
         CitaModel cita = new CitaModel(nu_id, nombre, edad, tipoCita, generoPac, fechaCita, motivo);
-
-        
-        citas.add(cita);
+        citaService.guardarCita(cita);
 
         model.addAttribute("cita", cita);
 
         return "redirect:/Aviso";
     }
 
-    @GetMapping("/Consultar")
-    @ResponseBody
-    public List<CitaModel> consultarCitas() {
-        return citas;
-    }
-
     @GetMapping("/api/Consultar-Citas")
     @ResponseBody
     public List<CitaModel> consultarCitas(@RequestParam("nu-identificacion") int nuId) {
-        return citas.stream()
-                .filter(cita -> cita.getNo_id() == nuId) 
-                .collect(Collectors.toList());
+        return citaService.obtenerCitasPorIdentificacion(nuId);
     }
-
-
 }

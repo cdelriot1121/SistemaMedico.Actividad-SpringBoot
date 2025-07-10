@@ -20,6 +20,9 @@
                 <li><a href="/"><i class='bx bx-home-alt'></i> Inicio</a></li>
                 <li><a href="#"><i class='bx bx-bar-chart-square'></i> Servicios</a></li>
                 <li><a href="#"><i class='bx bx-book-content'></i> Contacto</a></li>
+                <li th:if="${session.usuarioId == null}"><a href="/login"><i class='bx bx-log-in'></i> Iniciar Sesión</a></li>
+                <li th:if="${session.usuarioId == null}"><a href="/register"><i class='bx bx-user-plus'></i> Registrarse</a></li>
+                <li th:if="${session.usuarioId != null}"><a href="/logout"><i class='bx bx-log-out'></i> Cerrar Sesión</a></li>
             </ul>
         </div>
     </nav>
@@ -31,7 +34,7 @@
             <form action="/procesarCita" method="post">
                 <div class="form-group">
                     <label for="nu-identificacion">Numero de identificacion:</label>
-                    <input type="number" id="nu-identificacion" name="nu-identificacion" placeholder="Digite su numero de identificacion" required> <!-- Cambié "nu-identificion" a "nu-identificacion" -->
+                    <input type="number" id="nu-identificacion" name="nu-identificacion" th:value="${identificacion}" placeholder="Digite su numero de identificacion" required>
                 </div>
                 <div class="form-group">
                     <label for="nombre">Nombre del Paciente:</label>

@@ -1,13 +1,16 @@
 package com.SistemaMedico.model;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "clientes")
 public class ClienteModel {
-    private int no_id;
+    @Id
+    private String id;
+    private int noId; // Número de identificación
     private String nombre_cliente;
     private int edad_cliente;
-    private int telefono_cliente;
+    private String telefono_cliente; // Cambiado de int a String para manejar números de teléfono largos
     private String genero_cliente;
     private String direccion_cliente;
 
@@ -15,9 +18,9 @@ public class ClienteModel {
 
     public ClienteModel() {
     }
-    public ClienteModel(int no_id, String nombre_cliente, int edad_cliente, int telefono_cliente, String genero_cliente,
+    public ClienteModel(int noId, String nombre_cliente, int edad_cliente, String telefono_cliente, String genero_cliente,
             String direccion_cliente) {
-        this.no_id = no_id;
+        this.noId = noId;
         this.nombre_cliente = nombre_cliente;
         this.edad_cliente = edad_cliente;
         this.telefono_cliente = telefono_cliente;
@@ -25,12 +28,20 @@ public class ClienteModel {
         this.direccion_cliente = direccion_cliente;
     }
 
-    public int getNo_id() {
-        return no_id;
+    public String getId() {
+        return id;
     }
 
-    public void setNo_id(int no_id) {
-        this.no_id = no_id;
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public int getNoId() {
+        return noId;
+    }
+
+    public void setNoId(int noId) {
+        this.noId = noId;
     }
 
     public String getNombre_cliente() {
@@ -49,11 +60,11 @@ public class ClienteModel {
         this.edad_cliente = edad_cliente;
     }
 
-    public int getTelefono_cliente() {
+    public String getTelefono_cliente() {
         return telefono_cliente;
     }
 
-    public void setTelefono_cliente(int telefono_cliente) {
+    public void setTelefono_cliente(String telefono_cliente) {
         this.telefono_cliente = telefono_cliente;
     }
 
