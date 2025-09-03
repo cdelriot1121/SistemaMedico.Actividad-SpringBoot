@@ -56,12 +56,18 @@ public class CitaController {
             return "redirect:/login";
         }
         
-        CitaModel cita = new CitaModel(nu_id, nombre, edad, tipoCita, generoPac, fechaCita, motivo);
-        citaService.guardarCita(cita);
+        try {
+            CitaModel cita = new CitaModel(nu_id, nombre, edad, tipoCita, generoPac, fechaCita, motivo);
+            CitaModel citaGuardada = citaService.guardarCita(cita);
 
-        model.addAttribute("cita", cita);
+            model.addAttribute("cita", citaGuardada);
+            model.addAttribute("mensaje", "Cita agendada exitosamente");
 
-        return "redirect:/Aviso";
+            return "redirect:/Aviso";
+        } catch (Exception e) {
+            model.addAttribute("error", "Error al agendar la cita: " + e.getMessage());
+            return "Agendar-Cita";
+        }
     }
 
     @GetMapping("/api/Consultar-Citas")

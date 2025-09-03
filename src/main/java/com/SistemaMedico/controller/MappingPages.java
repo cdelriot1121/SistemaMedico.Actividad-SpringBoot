@@ -43,5 +43,18 @@ public class MappingPages {
         return "Consultar-cita";
     }
     
+    @GetMapping("/admin")
+    public String mostrarPanelAdmin(HttpSession session, org.springframework.ui.Model model) {
+        // Verificar si el usuario está autenticado
+        if (session.getAttribute("usuarioId") == null) {
+            return "redirect:/login?redirect=admin";
+        }
+        
+        // Aquí podrías agregar verificación de rol de administrador
+        // Por ahora permitimos acceso a cualquier usuario autenticado
+        
+        return "admin";
+    }
+    
     // Eliminando el mapeo duplicado para login y register, ya están en ClienteController
 }

@@ -26,7 +26,7 @@ public class ClienteModel {
     @Column(name = "nombre_cliente", nullable = false, length = 100)
     private String nombreCliente;
     
-    @Column(name = "edad_cliente", nullable = false)
+    @Column(name = "edad_cliente", nullable = true) // Permitir null inicialmente
     private Integer edadCliente;
     
     @Column(name = "telefono_cliente", length = 20)

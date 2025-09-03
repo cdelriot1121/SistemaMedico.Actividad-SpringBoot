@@ -98,20 +98,21 @@ public class ClienteController {
                 return "redirect:/register";
             }
             
-            // Crear usuario (esto automáticamente creará el cliente también)
-            UsuarioModel usuario = new UsuarioModel(username, password, nombre, email, "CLIENTE", identificacion);
-            usuarioService.registrarUsuario(usuario);
+            // Crear cliente primero con todos los datos del formulario
+            ClienteModel cliente = new ClienteModel();
+            cliente.setNoId(identificacion);
+            cliente.setNombreCliente(nombre);
+            cliente.setEdadCliente(edad);
+            cliente.setTelefonoCliente(telefono);
+            cliente.setGeneroCliente(genero);
+            cliente.setDireccionCliente(direccion);
             
-            // Actualizar información adicional del cliente
-            Optional<ClienteModel> clienteOpt = clienteService.obtenerClientePorIdentificacion(identificacion);
-            if (clienteOpt.isPresent()) {
-                ClienteModel cliente = clienteOpt.get();
-                cliente.setDireccionCliente(direccion);
-                cliente.setEdadCliente(edad);
-                cliente.setTelefonoCliente(telefono);
-                cliente.setGeneroCliente(genero);
-                clienteService.guardarCliente(cliente);
-            }
+            ClienteModel clienteGuardado = clienteService.guardarCliente(cliente);
+            
+            // Crear usuario y vincularlo al cliente
+            UsuarioModel usuario = new UsuarioModel(username, password, nombre, email, "CLIENTE", identificacion);
+            usuario.setCliente(clienteGuardado);
+            usuarioService.registrarUsuario(usuario);
             
             redirectAttributes.addFlashAttribute("success", "Registro exitoso, ahora puedes iniciar sesión");
             return "redirect:/login";

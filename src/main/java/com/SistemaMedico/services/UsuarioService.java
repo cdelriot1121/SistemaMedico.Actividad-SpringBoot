@@ -50,8 +50,8 @@ public class UsuarioService {
         
         UsuarioModel usuarioGuardado = usuarioRepository.save(usuario);
         
-        // Si es un cliente, crear también el registro en la tabla de clientes
-        if ("CLIENTE".equalsIgnoreCase(usuario.getRol())) {
+        // Si es un cliente y no tiene cliente vinculado, crear el registro
+        if ("CLIENTE".equalsIgnoreCase(usuario.getRol()) && usuario.getCliente() == null) {
             crearClienteDesdeUsuario(usuarioGuardado);
         }
         
@@ -64,11 +64,21 @@ public class UsuarioService {
             ClienteModel cliente = new ClienteModel();
             cliente.setNoId(usuario.getIdentificacion());
             cliente.setNombreCliente(usuario.getNombre());
+            // Establecer valores por defecto para campos obligatorios
+            cliente.setEdadCliente(0); // Se actualizará después en el controlador
+            cliente.setGeneroCliente(""); // Se actualizará después en el controlador
             clienteService.guardarCliente(cliente);
             
             // Vincular el cliente con el usuario
             usuario.setCliente(cliente);
             usuarioRepository.save(usuario);
+        } else {
+            // Si ya existe el cliente, vincular con el usuario
+            Optional<ClienteModel> clienteOpt = clienteService.obtenerClientePorIdentificacion(usuario.getIdentificacion());
+            if (clienteOpt.isPresent()) {
+                usuario.setCliente(clienteOpt.get());
+                usuarioRepository.save(usuario);
+            }
         }
     }
     

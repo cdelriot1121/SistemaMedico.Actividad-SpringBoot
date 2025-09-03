@@ -30,6 +30,14 @@
     <main>
         <div class="container">
             <h2>Agendar Cita</h2>
+            
+            <div th:if="${error}" class="alert alert-danger">
+                <p th:text="${error}"></p>
+            </div>
+            
+            <div th:if="${success}" class="alert alert-success">
+                <p th:text="${success}"></p>
+            </div>
     
             <form action="/procesarCita" method="post">
                 <div class="form-group">

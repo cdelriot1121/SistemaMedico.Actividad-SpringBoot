@@ -39,6 +39,7 @@
                 <div class="buttons">
                     <a href="/AgendarCita" class="btn">Agendar Cita</a>
                     <a href="/Consultar-Citas" class="btn">Consultar Cita</a>
+                    <a th:if="${session.usuarioId != null}" href="/admin" class="btn" style="background: #e74c3c;">Panel Admin</a>
                 </div>
             </div>
         </section>
