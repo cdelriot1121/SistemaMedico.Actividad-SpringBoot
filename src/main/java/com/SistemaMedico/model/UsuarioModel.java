@@ -1,28 +1,60 @@
 package com.SistemaMedico.model;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
+import java.time.LocalDateTime;
 
-@Document(collection = "usuarios")
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "usuarios")
 public class UsuarioModel {
     
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     
-    @Indexed(unique = true)
+    @Column(name = "username", unique = true, nullable = false, length = 50)
     private String username;
     
+    @Column(name = "password", nullable = false, length = 255)
     private String password;
+    
+    @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
+    
+    @Column(name = "email", length = 100)
     private String email;
+    
+    @Column(name = "rol", length = 20)
     private String rol; // Puede ser "CLIENTE", "ADMIN", etc.
-    private int identificacion; // Para vincular con la identificación del cliente
+    
+    @Column(name = "identificacion", unique = true, nullable = false)
+    private Integer identificacion; // Para vincular con la identificación del cliente
+    
+    @Column(name = "fecha_registro")
+    private LocalDateTime fechaRegistro;
+    
+    @Column(name = "activo")
+    private Boolean activo = true;
+    
+    // Relación con Cliente (un usuario puede estar relacionado con un cliente)
+    @OneToOne
+    @JoinColumn(name = "cliente_id", referencedColumnName = "id")
+    private ClienteModel cliente;
     
     public UsuarioModel() {
+        this.fechaRegistro = LocalDateTime.now();
+        this.activo = true;
     }
 
-    public UsuarioModel(String username, String password, String nombre, String email, String rol, int identificacion) {
+    public UsuarioModel(String username, String password, String nombre, String email, String rol, Integer identificacion) {
+        this();
         this.username = username;
         this.password = password;
         this.nombre = nombre;
@@ -32,11 +64,11 @@ public class UsuarioModel {
     }
 
     // Getters y Setters
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -80,11 +112,35 @@ public class UsuarioModel {
         this.rol = rol;
     }
 
-    public int getIdentificacion() {
+    public Integer getIdentificacion() {
         return identificacion;
     }
 
-    public void setIdentificacion(int identificacion) {
+    public void setIdentificacion(Integer identificacion) {
         this.identificacion = identificacion;
+    }
+
+    public LocalDateTime getFechaRegistro() {
+        return fechaRegistro;
+    }
+
+    public void setFechaRegistro(LocalDateTime fechaRegistro) {
+        this.fechaRegistro = fechaRegistro;
+    }
+
+    public Boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
+    }
+
+    public ClienteModel getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(ClienteModel cliente) {
+        this.cliente = cliente;
     }
 }

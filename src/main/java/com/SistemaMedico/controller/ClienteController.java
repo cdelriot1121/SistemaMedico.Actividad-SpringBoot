@@ -80,27 +80,47 @@ public class ClienteController {
             @RequestParam String genero,
             RedirectAttributes redirectAttributes) {
         
-        // Verificar si el usuario ya existe
-        if (usuarioService.existeUsername(username)) {
-            redirectAttributes.addFlashAttribute("error", "El nombre de usuario ya está en uso");
+        try {
+            // Verificar si el usuario ya existe
+            if (usuarioService.existeUsername(username)) {
+                redirectAttributes.addFlashAttribute("error", "El nombre de usuario ya está en uso");
+                return "redirect:/register";
+            }
+            
+            if (usuarioService.existeEmail(email)) {
+                redirectAttributes.addFlashAttribute("error", "El correo electrónico ya está registrado");
+                return "redirect:/register";
+            }
+            
+            // Verificar si ya existe un cliente con esa identificación
+            if (clienteService.existeClientePorIdentificacion(identificacion)) {
+                redirectAttributes.addFlashAttribute("error", "Ya existe un registro con esa identificación");
+                return "redirect:/register";
+            }
+            
+            // Crear cliente primero con todos los datos del formulario
+            ClienteModel cliente = new ClienteModel();
+            cliente.setNoId(identificacion);
+            cliente.setNombreCliente(nombre);
+            cliente.setEdadCliente(edad);
+            cliente.setTelefonoCliente(telefono);
+            cliente.setGeneroCliente(genero);
+            cliente.setDireccionCliente(direccion);
+            
+            ClienteModel clienteGuardado = clienteService.guardarCliente(cliente);
+            
+            // Crear usuario y vincularlo al cliente
+            UsuarioModel usuario = new UsuarioModel(username, password, nombre, email, "CLIENTE", identificacion);
+            usuario.setCliente(clienteGuardado);
+            usuarioService.registrarUsuario(usuario);
+            
+            redirectAttributes.addFlashAttribute("success", "Registro exitoso, ahora puedes iniciar sesión");
+            return "redirect:/login";
+            
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error en el registro: " + e.getMessage());
             return "redirect:/register";
         }
-        
-        if (usuarioService.existeEmail(email)) {
-            redirectAttributes.addFlashAttribute("error", "El correo electrónico ya está registrado");
-            return "redirect:/register";
-        }
-        
-        // Crear cliente
-        ClienteModel cliente = new ClienteModel(identificacion, nombre, edad, telefono, genero, direccion);
-        clienteService.guardarCliente(cliente);
-        
-        // Crear usuario
-        UsuarioModel usuario = new UsuarioModel(username, password, nombre, email, "CLIENTE", identificacion);
-        usuarioService.registrarUsuario(usuario);
-        
-        redirectAttributes.addFlashAttribute("success", "Registro exitoso, ahora puedes iniciar sesión");
-        return "redirect:/login";
     }
     
     @GetMapping("/logout")

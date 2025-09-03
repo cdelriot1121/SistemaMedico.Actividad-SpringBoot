@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Hospital ROLEM</title>
+    
+    <!--LINKS CSS-->
+    <link rel="stylesheet" href="/main.css">
+    <link rel="stylesheet" href="/estilos/pagina1.css">
+    
+    <!--LINKS CODE EXTERNOS-->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    
+    <style>
+        .admin-panel {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stat-card h3 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        
+        .stat-card p {
+            margin: 10px 0 0 0;
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .stat-card.clients {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .stat-card.users {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .stat-card.appointments {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .stat-card.completed {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+        
+        .actions-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .actions-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .action-btn {
+            display: inline-block;
+            padding: 12px 20px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+            transition: background 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .action-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .action-btn.secondary {
+            background: #95a5a6;
+        }
+        
+        .action-btn.secondary:hover {
+            background: #7f8c8d;
+        }
+        
+        .action-btn.success {
+            background: #27ae60;
+        }
+        
+        .action-btn.success:hover {
+            background: #229954;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .admin-panel {
+                margin: 10px;
+                padding: 15px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h1>HOSPITAL ROLEM</h1>
+            <ul>
+                <li><a href="/"><i class='bx bx-home-alt'></i> Inicio</a></li>
+                <li><a href="/Agendar-Cita"><i class='bx bx-calendar-plus'></i> Agendar</a></li>
+                <li><a href="/Consultar-Citas"><i class='bx bx-search'></i> Consultar</a></li>
+                <li th:if="${session.usuarioId != null}"><a href="/logout"><i class='bx bx-log-out'></i> Cerrar Sesión</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="admin-panel">
+        <h1><i class='bx bx-stats'></i> Panel de Administración</h1>
+        
+        <!-- Estadísticas principales -->
+        <div class="stats-grid">
+            <div class="stat-card clients">
+                <h3 id="totalClientes">-</h3>
+                <p>Total Clientes</p>
+            </div>
+            <div class="stat-card users">
+                <h3 id="totalUsuarios">-</h3>
+                <p>Total Usuarios</p>
+            </div>
+            <div class="stat-card appointments">
+                <h3 id="totalCitas">-</h3>
+                <p>Total Citas</p>
+            </div>
+            <div class="stat-card completed">
+                <h3 id="citasCompletadas">-</h3>
+                <p>Citas Completadas</p>
+            </div>
+        </div>
+
+        <!-- Sección de acciones -->
+        <div class="actions-section">
+            <h2><i class='bx bx-cog'></i> Acciones de Administración</h2>
+            <div class="action-buttons">
+                <a href="#" class="action-btn" onclick="cargarDatos('clientes')">
+                    <i class='bx bx-group'></i> Ver Clientes
+                </a>
+                <a href="#" class="action-btn" onclick="cargarDatos('usuarios')">
+                    <i class='bx bx-user'></i> Ver Usuarios
+                </a>
+                <a href="#" class="action-btn" onclick="cargarDatos('citas')">
+                    <i class='bx bx-calendar'></i> Ver Todas las Citas
+                </a>
+                <a href="#" class="action-btn success" onclick="cargarDatos('citasprogramadas')">
+                    <i class='bx bx-calendar-check'></i> Citas Programadas
+                </a>
+                <a href="#" class="action-btn secondary" onclick="cargarDatos('citasrecientes')">
+                    <i class='bx bx-time'></i> Citas Recientes
+                </a>
+                <button class="action-btn" onclick="actualizarEstadisticas()">
+                    <i class='bx bx-refresh'></i> Actualizar Estadísticas
+                </button>
+            </div>
+        </div>
+
+        <!-- Sección de datos -->
+        <div class="actions-section" id="datosSection" style="display: none;">
+            <h2 id="datosTitle">Datos</h2>
+            <div id="datosContent" class="loading">
+                Cargando datos...
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Hospital ROLEM. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Cargar estadísticas al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            actualizarEstadisticas();
+        });
+
+        // Función para actualizar estadísticas
+        async function actualizarEstadisticas() {
+            try {
+                const response = await fetch('/api/estadisticas/resumen');
+                const data = await response.json();
+                
+                document.getElementById('totalClientes').textContent = data.totalClientes || '0';
+                document.getElementById('totalUsuarios').textContent = data.totalUsuarios || '0';
+                document.getElementById('totalCitas').textContent = data.citas.totalCitas || '0';
+                document.getElementById('citasCompletadas').textContent = data.citas.citasCompletadas || '0';
+            } catch (error) {
+                console.error('Error al cargar estadísticas:', error);
+                // Mostrar valores predeterminados en caso de error
+                document.getElementById('totalClientes').textContent = '0';
+                document.getElementById('totalUsuarios').textContent = '0';
+                document.getElementById('totalCitas').textContent = '0';
+                document.getElementById('citasCompletadas').textContent = '0';
+            }
+        }
+
+        // Función para cargar diferentes tipos de datos
+        async function cargarDatos(tipo) {
+            const datosSection = document.getElementById('datosSection');
+            const datosTitle = document.getElementById('datosTitle');
+            const datosContent = document.getElementById('datosContent');
+            
+            datosSection.style.display = 'block';
+            datosContent.innerHTML = '<div class="loading">Cargando datos...</div>';
+            
+            let url = '';
+            let titulo = '';
+            
+            switch(tipo) {
+                case 'clientes':
+                    url = '/api/clientes';
+                    titulo = 'Lista de Clientes';
+                    break;
+                case 'usuarios':
+                    url = '/api/usuarios';
+                    titulo = 'Lista de Usuarios';
+                    break;
+                case 'citas':
+                    url = '/api/citas';
+                    titulo = 'Todas las Citas';
+                    break;
+                case 'citasprogramadas':
+                    url = '/api/citas/estado/PROGRAMADA';
+                    titulo = 'Citas Programadas';
+                    break;
+                case 'citasrecientes':
+                    url = '/api/citas/recientes';
+                    titulo = 'Citas Recientes (30 días)';
+                    break;
+            }
+            
+            datosTitle.textContent = titulo;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (tipo === 'clientes') {
+                    mostrarClientes(data);
+                } else if (tipo === 'usuarios') {
+                    mostrarUsuarios(data);
+                } else {
+                    mostrarCitas(data);
+                }
+            } catch (error) {
+                datosContent.innerHTML = '<div class="alert alert-danger">Error al cargar los datos: ' + error.message + '</div>';
+            }
+        }
+
+        function mostrarClientes(clientes) {
+            const datosContent = document.getElementById('datosContent');
+            if (!clientes || clientes.length === 0) {
+                datosContent.innerHTML = '<p>No hay clientes registrados.</p>';
+                return;
+            }
+            
+            let html = '<table style="width: 100%; border-collapse: collapse; margin-top: 15px;">';
+            html += '<tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">';
+            html += '<th style="padding: 12px; text-align: left;">ID</th>';
+            html += '<th style="padding: 12px; text-align: left;">Identificación</th>';
+            html += '<th style="padding: 12px; text-align: left;">Nombre</th>';
+            html += '<th style="padding: 12px; text-align: left;">Edad</th>';
+            html += '<th style="padding: 12px; text-align: left;">Teléfono</th>';
+            html += '</tr>';
+            
+            clientes.forEach(cliente => {
+                html += '<tr style="border-bottom: 1px solid #dee2e6;">';
+                html += `<td style="padding: 10px;">${cliente.id || ''}</td>`;
+                html += `<td style="padding: 10px;">${cliente.noId || ''}</td>`;
+                html += `<td style="padding: 10px;">${cliente.nombreCliente || cliente.nombre_cliente || ''}</td>`;
+                html += `<td style="padding: 10px;">${cliente.edadCliente || cliente.edad_cliente || ''}</td>`;
+                html += `<td style="padding: 10px;">${cliente.telefonoCliente || cliente.telefono_cliente || ''}</td>`;
+                html += '</tr>';
+            });
+            
+            html += '</table>';
+            datosContent.innerHTML = html;
+        }
+
+        function mostrarUsuarios(usuarios) {
+            const datosContent = document.getElementById('datosContent');
+            if (!usuarios || usuarios.length === 0) {
+                datosContent.innerHTML = '<p>No hay usuarios registrados.</p>';
+                return;
+            }
+            
+            let html = '<table style="width: 100%; border-collapse: collapse; margin-top: 15px;">';
+            html += '<tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">';
+            html += '<th style="padding: 12px; text-align: left;">ID</th>';
+            html += '<th style="padding: 12px; text-align: left;">Usuario</th>';
+            html += '<th style="padding: 12px; text-align: left;">Nombre</th>';
+            html += '<th style="padding: 12px; text-align: left;">Email</th>';
+            html += '<th style="padding: 12px; text-align: left;">Rol</th>';
+            html += '<th style="padding: 12px; text-align: left;">Estado</th>';
+            html += '</tr>';
+            
+            usuarios.forEach(usuario => {
+                html += '<tr style="border-bottom: 1px solid #dee2e6;">';
+                html += `<td style="padding: 10px;">${usuario.id || ''}</td>`;
+                html += `<td style="padding: 10px;">${usuario.username || ''}</td>`;
+                html += `<td style="padding: 10px;">${usuario.nombre || ''}</td>`;
+                html += `<td style="padding: 10px;">${usuario.email || ''}</td>`;
+                html += `<td style="padding: 10px;"><span style="padding: 4px 8px; background: #007bff; color: white; border-radius: 4px; font-size: 12px;">${usuario.rol || 'CLIENTE'}</span></td>`;
+                html += `<td style="padding: 10px;"><span style="padding: 4px 8px; background: ${usuario.activo ? '#28a745' : '#dc3545'}; color: white; border-radius: 4px; font-size: 12px;">${usuario.activo ? 'ACTIVO' : 'INACTIVO'}</span></td>`;
+                html += '</tr>';
+            });
+            
+            html += '</table>';
+            datosContent.innerHTML = html;
+        }
+
+        function mostrarCitas(citas) {
+            const datosContent = document.getElementById('datosContent');
+            if (!citas || citas.length === 0) {
+                datosContent.innerHTML = '<p>No hay citas disponibles.</p>';
+                return;
+            }
+            
+            let html = '<table style="width: 100%; border-collapse: collapse; margin-top: 15px;">';
+            html += '<tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">';
+            html += '<th style="padding: 12px; text-align: left;">ID</th>';
+            html += '<th style="padding: 12px; text-align: left;">Paciente</th>';
+            html += '<th style="padding: 12px; text-align: left;">Fecha</th>';
+            html += '<th style="padding: 12px; text-align: left;">Tipo</th>';
+            html += '<th style="padding: 12px; text-align: left;">Estado</th>';
+            html += '</tr>';
+            
+            citas.forEach(cita => {
+                const estadoColor = cita.estadoCita === 'PROGRAMADA' ? '#007bff' : 
+                                   cita.estadoCita === 'COMPLETADA' ? '#28a745' : '#dc3545';
+                
+                html += '<tr style="border-bottom: 1px solid #dee2e6;">';
+                html += `<td style="padding: 10px;">${cita.id || ''}</td>`;
+                html += `<td style="padding: 10px;">${cita.nombrePaciente || cita.nombre_paciente || ''}</td>`;
+                html += `<td style="padding: 10px;">${cita.fechaCita || cita.fecha_cita || ''}</td>`;
+                html += `<td style="padding: 10px;">${cita.tipoCita || cita.tipo_cita || ''}</td>`;
+                html += `<td style="padding: 10px;"><span style="padding: 4px 8px; background: ${estadoColor}; color: white; border-radius: 4px; font-size: 12px;">${cita.estadoCita || 'PROGRAMADA'}</span></td>`;
+                html += '</tr>';
+            });
+            
+            html += '</table>';
+            datosContent.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

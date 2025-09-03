@@ -32,6 +32,10 @@
                 <p th:text="${error}"></p>
             </div>
             
+            <div th:if="${success}" class="alert alert-success">
+                <p th:text="${success}"></p>
+            </div>
+            
             <form action="/procesarRegistro" method="post">
                 <div class="form-row">
                     <div class="form-group">
